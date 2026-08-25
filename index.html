@@ -341,10 +341,10 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
       <div class="opts-grid">
         <div class="opt"><label>Expiry</label><select id="expiry-select"><option value="1">1 din</option><option value="7">7 din</option><option value="30" selected>30 din</option></select></div>
         <div class="opt"><label>Lock code</label><div style="display:flex; gap:4px;"><input id="pwd-input" type="text" inputmode="numeric" maxlength="6" placeholder="4821"><button id="gen-pwd" class="btn btn-small" type="button">Gen</button></div></div>
-        <div class="opt"><label>Views limit (secret)</label><select id="views-limit"><option value="0">Unlimited</option><option value="1" selected>1 view (burn)</option><option value="5">5 views</option><option value="10">10 views</option></select></div>
+        <div class="opt"><label>Views limit</label><select id="views-limit"><option value="0" selected>Unlimited ♾️</option><option value="1">1 view (burn)</option><option value="5">5 views</option><option value="10">10 views</option></select></div>
         <div class="opt"><label>Font size</label><div style="display:flex; gap:4px;"><button id="font-dec" class="btn btn-small" type="button">A-</button><button id="font-inc" class="btn btn-small" type="button">A+</button><span id="font-size-label" style="font-size:11px; align-self:center;">18px</span></div></div>
       </div>
-      <div class="check-row"><input id="burn-check" type="checkbox" checked><label for="burn-check">Burn after reading (secret mode default)</label></div>
+      <div class="check-row"><input id="burn-check" type="checkbox"><label for="burn-check">Burn after reading — khulne ke baad delete (only for secret)</label></div>
       <div class="check-row"><input id="qr-check" type="checkbox" checked><label for="qr-check">QR code banao</label></div>
       <div class="check-row"><input id="voice-check" type="checkbox"><label for="voice-check">Voice input button dikhao (🎤 Bolo)</label></div>
     </details>
@@ -566,7 +566,9 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
     curMode=m;
     modeTabs.forEach(t=>{ const is=t.dataset.mode===m; t.classList.toggle("active", is); t.setAttribute("aria-selected", is); });
     Object.entries(sections).forEach(([k,el])=>el.classList.toggle("hidden", k!==m));
-    if(m==="secret"){ burnChk.checked=true; viewsLimitSel.value="1"; } 
+    // default unlimited views for all simple modes — fix bug where simple parchi burned after 1 view
+    if(m==="secret"){ burnChk.checked=true; viewsLimitSel.value="1"; }
+    else { burnChk.checked=false; viewsLimitSel.value="0"; }
     updateCounts();
   }
   modeTabs.forEach(t=>t.addEventListener("click", ()=>setMode(t.dataset.mode)));
@@ -829,7 +831,7 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
         const t=secretInput.value.trim(); if(!t && !editingId){ showErr("Secret likho"); return; }
         payload={
           type:"secret", t:secretInput.value, title:secretTitle.value.trim().slice(0,80),
-          c:new Date().toISOString(), exp:expAt, burn:true, pwd:pwd||"", views:0, viewsLimit: viewsLimit||1, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
+          c:new Date().toISOString(), exp:expAt, burn:burnChk.checked, pwd:pwd||"", views:0, viewsLimit: viewsLimit, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
         };
       }else{
         const t=input.value.trim(); if(!t && !editingId){ showErr("Pehle kuch likho"); return; }
@@ -1286,5 +1288,5 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
   codeInput.addEventListener("keydown", e=>{ if((e.metaKey||e.ctrlKey) && e.key==="Enter"){ e.preventDefault(); make(); } });
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a307e4de8d3071b0',t:'MTc4NzYzMjU2OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a307f2774cf3abaa',t:'MTc4NzYzMzEyNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
