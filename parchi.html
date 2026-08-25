@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parchi — text, code, file, list, secret — chhota link</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Anek+Devanagari:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#FFF1B8;
+  --surface:#FFFFFF;
+  --surface-2:#FFF6D6;
+  --surface-3:#FFF0B3;
+  --ink:#211E1A;
+  --ink-2:#8B857C;
+  --rule:#E6D38A;
+  --rule-blue:#9DB4D3;
+  --rule-red:#E8A0A0;
+  --accent:#B42318;
+  --accent-soft:#FDE8E5;
+  --accent-hover:#8A1A12;
+  --tape:#F7E6A5;
+  --green:#1F8A4C;
+  --green-hover:#176A3A;
+  --blue:#2A5DB0;
+  --pink-paper:#FFF0F0;
+  --saffron:#FF9933;
+  --india-green:#138808;
+  --radius:4px;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  color-scheme: light;
+  caret-color: var(--accent);
+  --paper-bg: var(--surface);
+  --font-size: 18px;
+}
+*{box-sizing:border-box}
+.tricolor{ height:4px; display:flex; width:100%; position:sticky; top:0; z-index:100; }
+.tricolor span{ flex:1; display:block; }
+.tricolor .saff{ background:var(--saffron); }
+.tricolor .white{ background:#fff; position:relative; }
+.tricolor .white::after{ content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:8px; height:8px; border:1px solid #000080; border-radius:50%; opacity:0.7; }
+.tricolor .green{ background:var(--india-green); }
+body{ margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; font-size:16px; line-height:1.6; min-height:100vh; display:flex; flex-direction:column; }
+::selection{ background:var(--accent-soft); color:var(--ink); }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-thumb{ background:#D4C07A; border-radius:10px; border:2px solid var(--ground); }
+a{ color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1px; }
+a:focus-visible, button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+.skip{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.skip:focus{ left:12px; top:12px; width:auto; height:auto; background:var(--surface); padding:8px 12px; border:1px solid var(--rule); border-radius:var(--radius); z-index:999; }
+.wrap{ width:min(780px, calc(100% - 26px)); margin-inline:auto; }
+header{ padding:18px 0 12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.brand{ display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit; }
+.brand-mark{ width:38px; height:38px; background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius); display:grid; place-items:center; transform:rotate(-2deg); flex:0 0 auto; }
+.brand-mark span{ font-family:"Kalam", cursive; font-size:21px; font-weight:700; line-height:1; transform:rotate(3deg); }
+.brand h1{ font-family:"Anek Devanagari", sans-serif; font-size:30px; line-height:0.9; font-weight:600; letter-spacing:-0.02em; margin:0; }
+.brand p{ margin:1px 0 0; font-family:"Kalam", cursive; font-size:14px; line-height:1; color:var(--ink-2); }
+.hdr-note{ font-family:"Kalam", cursive; font-size:13px; color:var(--ink-2); text-align:right; line-height:1.2; }
+
+main{ flex:1; padding:10px 0 80px; }
+.mode-tabs{ display:flex; gap:0; align-items:flex-end; margin-bottom:-1px; position:relative; z-index:2; flex-wrap:wrap; }
+.mode-tab{
+  appearance:none; border:1px solid var(--rule); border-bottom:1px solid var(--rule);
+  background:var(--surface-2); padding:8px 12px 7px; border-radius:4px 4px 0 0;
+  font-family:"Anek Devanagari", sans-serif; font-size:13px; font-weight:500; cursor:pointer;
+  transform:rotate(-0.6deg); margin-right:6px; margin-bottom:4px;
+  transition:background-color 160ms var(--ease), transform 120ms var(--ease), border-color 160ms var(--ease);
+}
+.mode-tab:nth-child(2){ transform:rotate(0.5deg); }
+.mode-tab:nth-child(3){ transform:rotate(-0.3deg); }
+.mode-tab:nth-child(4){ transform:rotate(0.7deg); }
+.mode-tab:nth-child(5){ transform:rotate(-0.5deg); }
+.mode-tab:hover{ background:var(--surface-3); }
+.mode-tab:active{ transform:scale(0.96); }
+.mode-tab.active{ background:var(--paper-bg); border-bottom-color:var(--paper-bg); transform:rotate(0); font-weight:600; }
+.mode-panel{ background:var(--paper-bg); border:1px solid var(--rule); border-radius:0 4px 4px 4px; padding:14px; position:relative; z-index:1; }
+
+.title{ font-family:"Anek Devanagari", sans-serif; font-size:26px; line-height:1.05; letter-spacing:-0.02em; font-weight:600; margin:0 0 6px; text-wrap:balance; }
+.subtitle{ font-family:"Kalam", cursive; font-size:16px; line-height:1.3; color:var(--ink-2); margin:0 0 12px; }
+
+.title-input{
+  width:100%; border:1px solid var(--rule); border-radius:var(--radius); background:var(--surface);
+  padding:9px 11px; font-family:"Anek Devanagari", sans-serif; font-size:15px; font-weight:500; outline:0; margin-bottom:8px;
+}
+.title-input::placeholder{ color:#B8B1A3; }
+.title-input:focus{ border-color:#C9B56A; }
+
+.paper{
+  position:relative; background:var(--paper-bg); border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; transition:border-color 160ms var(--ease);
+}
+.paper:focus-within{ border-color:#C9B56A; }
+.paper::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:46px; border-right:1px solid var(--rule-red); background:var(--paper-bg); pointer-events:none; }
+.paper::after{ content:""; position:absolute; left:46px; right:0; top:0; bottom:0; background:repeating-linear-gradient(to bottom, transparent 0 27px, var(--rule-blue) 27px 28px); opacity:0.5; pointer-events:none; }
+.paper textarea{
+  position:relative; z-index:1; width:100%; min-height:260px; max-height:58vh; resize:vertical;
+  border:0; background:transparent; padding:10px 12px 12px 58px;
+  font-family:"Kalam", cursive; font-size:var(--font-size); line-height:28px; color:var(--ink); outline:0;
+}
+.paper textarea.mono{ font-family:"IBM Plex Mono", monospace; font-size:14px; line-height:22px; padding-top:10px; }
+.paper textarea::placeholder{ color:#B8B1A3; }
+
+.code-head{ display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
+.code-head select{ border:1px solid var(--rule); border-radius:2px; background:var(--surface-2); padding:5px 8px; font-size:12px; font-family:"IBM Plex Mono", monospace; }
+.code-wrap{ display:flex; border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; background:var(--paper-bg); }
+.code-gutter{ width:44px; background:#FFF9D6; border-right:1px solid var(--rule); padding:8px 5px; text-align:right; font-family:"IBM Plex Mono", monospace; font-size:11px; line-height:21px; color:var(--ink-2); user-select:none; overflow:hidden; }
+.code-wrap textarea{ flex:1; min-height:300px; max-height:60vh; resize:vertical; border:0; background:transparent; padding:8px 10px; font-family:"IBM Plex Mono", monospace; font-size:13px; line-height:21px; outline:0; }
+
+.drop-zone{
+  border:1.5px dashed #C9B56A; border-radius:var(--radius); background:var(--surface-2);
+  padding:24px 16px; text-align:center; cursor:pointer;
+  transition:border-color 160ms var(--ease), background-color 160ms var(--ease), transform 120ms var(--ease);
+}
+.drop-zone:hover{ background:var(--surface-3); border-color:var(--accent); }
+.drop-zone:active{ transform:scale(0.98); }
+.drop-zone.dragover{ background:#FFF0B3; border-color:var(--accent); }
+.drop-zone input{ display:none; }
+.drop-icon{ font-size:26px; margin-bottom:6px; }
+.drop-zone p{ margin:0; font-family:"Kalam", cursive; font-size:15px; line-height:1.3; }
+.drop-zone small{ color:var(--ink-2); font-size:11px; }
+.file-list{ margin-top:10px; display:grid; gap:6px; }
+.file-item{ display:flex; justify-content:space-between; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius); padding:8px 10px; font-size:12px; }
+.file-item b{ font-family:"Anek Devanagari", sans-serif; font-weight:600; }
+.file-item button{ padding:3px 7px; font-size:11px; }
+
+.list-input{ width:100%; min-height:180px; border:1px solid var(--rule); border-radius:var(--radius); background:var(--paper-bg); padding:10px 12px 10px 12px; font-family:"Kalam", cursive; font-size:17px; line-height:28px; outline:0; resize:vertical; }
+.list-hint{ font-size:11px; color:var(--ink-2); margin-top:4px; }
+
+.meta{ display:flex; gap:8px; align-items:center; margin-top:8px; font-size:11px; color:var(--ink-2); flex-wrap:wrap; }
+.actions{ display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+.btn{
+  appearance:none; border:1px solid var(--rule); background:var(--surface); color:var(--ink);
+  padding:9px 12px; border-radius:var(--radius);
+  font-family:"Anek Devanagari", sans-serif; font-size:13px; font-weight:500; line-height:1;
+  cursor:pointer; display:inline-flex; align-items:center; gap:5px;
+  transition:background-color 160ms var(--ease), border-color 160ms var(--ease), transform 120ms var(--ease), opacity 160ms var(--ease);
+}
+.btn:hover{ background:var(--surface-2); border-color:#C9B56A; }
+.btn:active{ transform:scale(0.97); }
+.btn:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
+.btn-primary{ background:var(--accent); color:#fff; border-color:var(--accent); font-size:14px; padding:10px 14px; }
+.btn-primary:hover{ background:var(--accent-hover); border-color:var(--accent-hover); }
+.btn-green{ background:var(--green); color:#fff; border-color:var(--green); }
+.btn-green:hover{ background:var(--green-hover); border-color:var(--green-hover); color:#fff; }
+.btn-small{ padding:6px 9px; font-size:11px; }
+
+details.opts{ margin-top:10px; border:1px dashed #D4C07A; border-radius:var(--radius); background:var(--surface-2); padding:8px 10px; }
+details.opts summary{ cursor:pointer; font-family:"Anek Devanagari", sans-serif; font-size:12px; font-weight:500; list-style:none; display:flex; align-items:center; gap:5px; }
+details.opts summary::-webkit-details-marker{ display:none; }
+.opts-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+@media (max-width:560px){ .opts-grid{ grid-template-columns:1fr; } }
+.opt label{ font-size:10px; color:var(--ink-2); display:block; margin-bottom:2px; font-family:"Anek Devanagari", sans-serif; }
+.opt select, .opt input{ width:100%; border:1px solid var(--rule); border-radius:2px; background:var(--surface); padding:6px 8px; font-size:12px; outline:0; }
+.check-row{ display:flex; gap:6px; align-items:flex-start; margin-top:6px; font-size:11px; line-height:1.3; }
+.check-row input{ margin-top:2px; }
+
+.paper-dots{ display:flex; gap:6px; align-items:center; margin-top:8px; }
+.dot{ width:18px; height:18px; border-radius:50%; border:1px solid var(--rule); cursor:pointer; }
+.dot.active{ outline:2px solid var(--accent); outline-offset:2px; }
+.dot.yellow{ background:#FFFFFF; }
+.dot.cream{ background:#FFF6D6; }
+.dot.pink{ background:var(--pink-paper); }
+
+.hint{ font-size:11px; color:var(--ink-2); margin-top:6px; line-height:1.3; font-family:"Kalam", cursive; }
+.empty{ margin-top:12px; padding:10px 12px; border:1px dashed #D4C07A; border-radius:var(--radius); background:var(--surface-2); display:flex; gap:8px; font-size:12px; line-height:1.3; color:var(--ink-2); }
+.empty strong{ color:var(--ink); font-family:"Anek Devanagari", sans-serif; }
+
+.chit{
+  margin-top:18px; position:relative; background:var(--paper-bg); border:1px solid var(--rule); border-radius:var(--radius); padding:16px 12px 12px; transform:rotate(0.3deg);
+}
+.chit::before{ content:""; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-2deg); width:90px; height:20px; background:var(--tape); border:1px solid #E8D38A; border-radius:2px; opacity:0.95; }
+.chit-fold{ position:absolute; right:0; bottom:0; width:18px; height:18px; background:linear-gradient(135deg, transparent 50%, #F0DE9A 50%); border-bottom-right-radius:var(--radius); border-top-left-radius:2px; }
+.chit h3{ font-family:"Anek Devanagari", sans-serif; font-size:17px; line-height:1.1; margin:0 0 3px; font-weight:600; }
+.chit p{ margin:0; font-family:"Kalam", cursive; font-size:13px; color:var(--ink-2); line-height:1.3; }
+.link-box{ display:flex; gap:5px; margin-top:8px; background:var(--surface-2); border:1px solid var(--rule); border-radius:2px; padding:4px 4px 4px 8px; align-items:center; }
+.link-box input{ flex:1; border:0; background:transparent; font-size:12px; color:var(--ink); outline:0; min-width:0; }
+.chit-actions{ display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
+.chit-meta{ margin-top:6px; font-size:10px; color:var(--ink-2); display:flex; gap:6px; flex-wrap:wrap; }
+.qr-wrap{ margin-top:10px; display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+.qr-box{ background:var(--surface); border:1px solid var(--rule); border-radius:2px; padding:4px; }
+.qr-box img{ display:block; width:100px; height:100px; }
+
+.history{ margin-top:22px; border-top:1px dashed #D4C07A; padding-top:12px; }
+.history h3{ font-family:"Anek Devanagari", sans-serif; font-size:15px; margin:0 0 8px; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
+.hist-tools{ display:flex; gap:6px; align-items:center; }
+.hist-list{ display:grid; gap:5px; }
+.hist-item{
+  display:flex; justify-content:space-between; gap:6px; align-items:center;
+  background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius); padding:7px 9px; font-size:11px; cursor:pointer;
+  transition:border-color 160ms var(--ease), background-color 160ms var(--ease), transform 120ms var(--ease);
+}
+.hist-item:hover{ background:var(--surface-2); border-color:#C9B56A; }
+.hist-item:active{ transform:scale(0.98); }
+.hist-item b{ font-weight:600; font-family:"Anek Devanagari", sans-serif; }
+.hist-item small{ color:var(--ink-2); }
+.hist-type{ font-size:9px; padding:1px 5px; border-radius:10px; background:var(--surface-2); border:1px solid var(--rule); }
+
+.view-head{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px; }
+.view-head h2{ font-family:"Anek Devanagari", sans-serif; font-size:24px; line-height:1; margin:0; font-weight:600; }
+.view-paper{ background:var(--paper-bg); border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; position:relative; }
+.view-paper::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:44px; border-right:1px solid var(--rule-red); background:var(--paper-bg); }
+.view-paper::after{ content:""; position:absolute; left:44px; right:0; top:0; bottom:0; background:repeating-linear-gradient(to bottom, transparent 0 27px, var(--rule-blue) 27px 28px); opacity:0.4; pointer-events:none; }
+.view-text{ position:relative; z-index:1; padding:10px 12px 12px 56px; font-family:"Kalam", cursive; font-size:var(--font-size); line-height:28px; white-space:pre-wrap; word-break:break-word; min-height:140px; max-height:66vh; overflow:auto; }
+.view-text.code{ font-family:"IBM Plex Mono", monospace; font-size:13px; line-height:20px; white-space:pre; }
+.code-view-wrap{ display:flex; border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; background:var(--paper-bg); }
+.code-gutter-view{ width:44px; background:#FFF9D6; border-right:1px solid var(--rule); padding:8px 5px; text-align:right; font-family:"IBM Plex Mono", monospace; font-size:10px; line-height:20px; color:var(--ink-2); user-select:none; }
+.code-content{ flex:1; padding:8px 10px; font-family:"IBM Plex Mono", monospace; font-size:13px; line-height:20px; white-space:pre; overflow:auto; }
+.file-view{ background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius); padding:12px; display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+.file-icon{ width:44px; height:44px; background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--radius); display:grid; place-items:center; font-size:20px; }
+.file-info b{ font-family:"Anek Devanagari", sans-serif; font-size:14px; }
+.file-info small{ color:var(--ink-2); font-size:11px; display:block; }
+
+.reactions{ display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; align-items:center; }
+.react-btn{ border:1px solid var(--rule); background:var(--surface); border-radius:20px; padding:4px 9px; font-size:12px; cursor:pointer; display:flex; gap:4px; align-items:center; transition:background-color 120ms var(--ease), border-color 120ms var(--ease), transform 120ms var(--ease); }
+.react-btn:hover{ background:var(--surface-2); }
+.react-btn:active{ transform:scale(0.95); }
+.react-btn.active{ background:var(--accent-soft); border-color:var(--accent); }
+
+.comments{ margin-top:16px; border-top:1px dashed #D4C07A; padding-top:10px; }
+.comments h4{ font-family:"Anek Devanagari", sans-serif; font-size:14px; margin:0 0 8px; }
+.comment-list{ display:grid; gap:6px; margin-bottom:8px; }
+.comment{ background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--radius); padding:6px 9px; font-size:12px; }
+.comment small{ color:var(--ink-2); font-size:10px; }
+.comment-input{ display:flex; gap:6px; }
+.comment-input input{ flex:1; border:1px solid var(--rule); border-radius:2px; padding:6px 8px; font-size:12px; outline:0; }
+
+.lock-box{ margin:10px 0; padding:10px; border:1px solid var(--rule); border-radius:var(--radius); background:var(--surface-2); display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap; }
+.lock-box input{ border:1px solid var(--rule); border-radius:2px; padding:6px 8px; font-size:13px; outline:0; }
+
+.error{ margin-top:10px; border:1px solid #E8B0A8; background:#FFF2F0; border-radius:var(--radius); padding:10px 12px; display:flex; gap:8px; }
+.error h4{ margin:0 0 2px; font-size:12px; font-weight:600; color:var(--accent); }
+.error p{ margin:0; font-size:12px; line-height:1.3; }
+
+.skeleton{ padding:12px 12px 12px 56px; display:grid; gap:8px; position:relative; }
+.skeleton::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:44px; border-right:1px solid var(--rule-red); background:var(--surface); }
+.s-line{ height:8px; background:#F0DE9A; border-radius:2px; }
+.s-line.w-80{ width:80%; } .s-line.w-60{ width:60%; } .s-line.w-40{ width:40%; }
+
+footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; font-size:10px; color:var(--ink-2); line-height:1.4; }
+.foot{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.foot b{ color:var(--ink); font-weight:600; }
+
+.toast-stack{ position:fixed; bottom:14px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:5px; z-index:50; pointer-events:none; }
+.toast{ pointer-events:auto; background:var(--ink); color:#fff; font-size:11px; padding:8px 10px; border-radius:var(--radius); transform:translateY(8px); opacity:0; transition:transform 200ms var(--ease), opacity 200ms var(--ease); }
+.toast.show{ transform:translateY(0); opacity:1; }
+
+.hidden{ display:none !important; }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+</style>
+</head>
+<body>
+<div class="tricolor" aria-hidden="true"><span class="saff"></span><span class="white"></span><span class="green"></span></div>
+<a class="skip" href="#main">Skip</a>
+<header class="wrap">
+  <a class="brand" href="./" aria-label="Home"><div class="brand-mark"><span>प</span></div><div><h1>Parchi</h1><p>text • code • file • list • secret</p></div></a>
+  <div class="hdr-note"><span style="display:inline-flex; align-items:center; gap:4px; border:1px solid var(--rule); background:var(--surface); padding:3px 7px; border-radius:20px; font-family:'Anek Devanagari', sans-serif; font-size:11px;"><span style="width:14px; height:10px; display:inline-block; background:linear-gradient(to bottom, #FF9933 33%, #fff 33%, #fff 66%, #138808 66%); border:1px solid #ddd; border-radius:1px;"></span> Made in India</span><br><span style="font-size:11px;">chhota link • 7 akshar • no login</span><br><span style="font-size:10px; color:var(--ink-2);">edit after sharing • 🇮🇳</span></div>
+</header>
+
+<main id="main" class="wrap">
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab active" role="tab" aria-selected="true" data-mode="text">📝 Parchi</button>
+    <button class="mode-tab" role="tab" aria-selected="false" data-mode="code">💻 Code</button>
+    <button class="mode-tab" role="tab" aria-selected="false" data-mode="file">📎 File</button>
+    <button class="mode-tab" role="tab" aria-selected="false" data-mode="list">✅ List</button>
+    <button class="mode-tab" role="tab" aria-selected="false" data-mode="secret">🔒 Secret</button>
+  </div>
+
+  <div class="mode-panel" id="editor-panel">
+    <div id="edit-banner" class="hidden" style="margin-bottom:10px; padding:8px 10px; border:1px solid var(--saffron); background:linear-gradient(90deg, #FFF6D6, #fff); border-radius:4px; display:flex; gap:8px; align-items:center; font-family:'Anek Devanagari', sans-serif; font-size:12px;"><span style="width:18px; height:12px; display:inline-block; background:linear-gradient(to bottom, #FF9933 33%, #fff 33%, #fff 66%, #138808 66%); border:1px solid #ccc; border-radius:1px; flex:0 0 auto;"></span><b>✏️ Edit mode 🇮🇳</b><span id="edit-banner-id" style="color:var(--ink-2);"></span><span style="margin-left:auto; font-family:Kalam, cursive; font-size:11px;">Save → same link update</span></div>
+    <!-- TEXT -->
+    <section id="mode-text" class="mode-section">
+      <h2 class="title">Kya likhna hai?</h2>
+      <p class="subtitle">Kirana, address, shayari — likho, chhota link banao.</p>
+      <input id="title-input" class="title-input" type="text" placeholder="Title (optional)" maxlength="80">
+      <div class="paper"><textarea id="paste-input" placeholder="Yahan likho..."></textarea></div>
+      <div class="meta"><span id="char-count">0 akshar</span><span>•</span><span id="line-count">1 line</span><span>•</span><span id="word-count">0 words</span></div>
+    </section>
+
+    <!-- CODE -->
+    <section id="mode-code" class="mode-section hidden">
+      <h2 class="title">Code share karo</h2>
+      <p class="subtitle">Snippet paste karo, language chuno.</p>
+      <input id="code-title" class="title-input" type="text" placeholder="Title — e.g. api.js" maxlength="80">
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap;">
+        <select id="lang-select" style="border:1px solid var(--rule); border-radius:2px; padding:5px 8px; font-size:12px; font-family:'IBM Plex Mono', monospace;">
+          <option value="plaintext">Plain</option><option value="javascript" selected>JS</option><option value="python">Python</option><option value="html">HTML</option><option value="css">CSS</option><option value="json">JSON</option><option value="bash">Bash</option><option value="java">Java</option><option value="cpp">C++</option>
+        </select>
+        <button id="prettify-btn" class="btn btn-small" type="button">✨ Prettify JSON</button>
+        <span style="font-size:10px; color:var(--ink-2);">line numbers auto</span>
+      </div>
+      <div class="code-wrap"><div id="code-gutter" class="code-gutter">1</div><textarea id="code-input" placeholder="code yahan..."></textarea></div>
+      <div class="meta"><span id="code-char">0 chars</span><span>•</span><span id="code-lines">1 line</span></div>
+    </section>
+
+    <!-- FILE -->
+    <section id="mode-file" class="mode-section hidden">
+      <h2 class="title">File bhejo</h2>
+      <p class="subtitle">Photo, PDF, zip — 1GB tak, chhota link.</p>
+      <div id="drop-zone" class="drop-zone" tabindex="0" role="button"><input id="file-input" type="file" multiple><div class="drop-icon">📎</div><p><b>Kheecho ya click karo</b></p><small>Max 1GB • auto delete 1h-72h • 🇮🇳</small></div>
+      <div id="file-list" class="file-list"></div>
+      <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <label style="font-size:11px;">File expiry:</label><select id="file-expiry" style="border:1px solid var(--rule); border-radius:2px; padding:5px 7px; font-size:11px;"><option value="1h">1h</option><option value="12h">12h</option><option value="24h" selected>24h</option><option value="72h">72h</option></select>
+      </div>
+    </section>
+
+    <!-- LIST -->
+    <section id="mode-list" class="mode-section hidden">
+      <h2 class="title">List banao</h2>
+      <p class="subtitle">Har line ek kaam — checklist ban jayegi.</p>
+      <input id="list-title" class="title-input" type="text" placeholder="List title — e.g. Sabzi" maxlength="80">
+      <textarea id="list-input" class="list-input" placeholder="Aloo&#10;Tamatar&#10;Doodh&#10;— har line ek item"></textarea>
+      <div class="list-hint">Viewer me tick kar sakte ho — local save hoga.</div>
+    </section>
+
+    <!-- SECRET -->
+    <section id="mode-secret" class="mode-section hidden">
+      <h2 class="title">Secret parchi</h2>
+      <p class="subtitle">Ek baar padhne ke baad gayab — password + burn default.</p>
+      <input id="secret-title" class="title-input" type="text" placeholder="Secret title" maxlength="80">
+      <div class="paper"><textarea id="secret-input" placeholder="Secret yahan likho..."></textarea></div>
+      <div class="meta"><span id="secret-char">0 akshar</span></div>
+    </section>
+
+    <!-- Paper colors -->
+    <div class="paper-dots" aria-label="Paper color">
+      <span style="font-size:11px; color:var(--ink-2);">Paper:</span>
+      <div class="dot yellow active" data-paper="#FFFFFF" title="White"></div>
+      <div class="dot cream" data-paper="#FFF6D6" title="Cream"></div>
+      <div class="dot pink" data-paper="#FFF0F0" title="Pink"></div>
+    </div>
+
+    <!-- Custom ID -->
+    <div style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+      <div style="flex:1; min-width:180px;"><label style="font-size:10px; color:var(--ink-2); display:block; margin-bottom:2px;">Apna chhota naam (optional)</label><input id="custom-id" type="text" placeholder="e.g. mummy-dawai" maxlength="20" style="width:100%; border:1px solid var(--rule); border-radius:2px; padding:6px 8px; font-size:12px;"></div>
+      <button id="check-id-btn" class="btn btn-small" type="button">Check</button>
+      <span id="custom-id-status" style="font-size:11px; color:var(--ink-2);"></span>
+    </div>
+
+    <details class="opts" id="opts"><summary>⚙️ More — expiry, lock, burn, QR, views</summary>
+      <div class="opts-grid">
+        <div class="opt"><label>Expiry</label><select id="expiry-select"><option value="1">1 din</option><option value="7">7 din</option><option value="30" selected>30 din</option></select></div>
+        <div class="opt"><label>Lock code</label><div style="display:flex; gap:4px;"><input id="pwd-input" type="text" inputmode="numeric" maxlength="6" placeholder="4821"><button id="gen-pwd" class="btn btn-small" type="button">Gen</button></div></div>
+        <div class="opt"><label>Views limit (secret)</label><select id="views-limit"><option value="0">Unlimited</option><option value="1" selected>1 view (burn)</option><option value="5">5 views</option><option value="10">10 views</option></select></div>
+        <div class="opt"><label>Font size</label><div style="display:flex; gap:4px;"><button id="font-dec" class="btn btn-small" type="button">A-</button><button id="font-inc" class="btn btn-small" type="button">A+</button><span id="font-size-label" style="font-size:11px; align-self:center;">18px</span></div></div>
+      </div>
+      <div class="check-row"><input id="burn-check" type="checkbox" checked><label for="burn-check">Burn after reading (secret mode default)</label></div>
+      <div class="check-row"><input id="qr-check" type="checkbox" checked><label for="qr-check">QR code banao</label></div>
+      <div class="check-row"><input id="voice-check" type="checkbox"><label for="voice-check">Voice input button dikhao (🎤 Bolo)</label></div>
+    </details>
+
+    <div class="actions">
+      <button id="create-btn" class="btn btn-primary" type="button">Chhota link banao</button>
+      <button id="clear-btn" class="btn" type="button">Saaf</button>
+      <button id="voice-btn" class="btn hidden" type="button">🎤 Bolo</button>
+      <button id="speak-btn" class="btn" type="button">🔊 Suno</button>
+      <span class="hint" id="mode-hint">Parchi mode</span>
+    </div>
+
+    <div id="error-box" class="error hidden" role="alert"><div>⚠</div><div style="flex:1"><h4>Link nahi bana</h4><p id="error-msg">—</p><button id="error-close" class="btn btn-small" style="margin-top:6px;" type="button">Theek</button></div></div>
+    <div id="empty-state" class="empty"><div>📝</div><div><strong>Khali hai</strong><br>Likho to chhota link banega — 7 akshar.</div></div>
+
+    <div id="shared-view" class="chit hidden" aria-live="polite">
+      <div class="chit-fold" aria-hidden="true"></div>
+      <h3 id="shared-h3">Link ready!</h3>
+      <p id="shared-title" style="font-weight:600; color:var(--ink); margin-bottom:4px;"></p>
+      <div class="link-box"><input id="share-link" type="text" readonly><button id="copy-link-btn" class="btn btn-primary" type="button" style="padding:7px 9px; font-size:12px;">Copy</button></div>
+      <div class="chit-meta"><span id="share-meta">—</span><span id="share-flags"></span></div>
+      <div id="qr-wrap" class="qr-wrap hidden"><div class="qr-box"><img id="qr-img" alt="QR" width="100" height="100"></div><div style="font-size:11px; color:var(--ink-2); max-width:200px;"><b style="color:var(--ink);">QR</b><br>Scan karo.</div></div>
+      <div class="chit-actions">
+        <button id="wa-btn" class="btn btn-green" type="button">WhatsApp</button>
+        <button id="tg-btn" class="btn" type="button">Telegram</button>
+        <button id="mail-btn" class="btn" type="button">Email</button>
+        <button id="dl-btn" class="btn" type="button">Download</button>
+        <button id="img-btn" class="btn" type="button">Image banao</button>
+        <button id="copy-text-btn" class="btn" type="button">Text copy</button>
+        <button id="edit-btn" class="btn" type="button">Edit karo</button>
+        <button id="dup-btn" class="btn" type="button">Duplicate</button>
+        <button id="open-link-btn" class="btn" type="button">Kholo</button>
+        <button id="new-parchi-btn" class="btn" type="button">Nayi</button>
+      </div>
+    </div>
+
+    <div id="history" class="history hidden">
+      <h3><span>Aapki parchiyan</span><span class="hist-tools"><input id="hist-search" type="text" placeholder="Search" style="border:1px solid var(--rule); border-radius:2px; padding:4px 6px; font-size:11px; width:100px;"><button id="export-hist" class="btn btn-small" type="button">Export</button><button id="clear-hist" class="btn btn-small" type="button">Clear</button></span></h3>
+      <div id="hist-list" class="hist-list"></div>
+    </div>
+  </div>
+
+  <!-- Viewer -->
+  <section id="viewer-view" class="hidden" style="margin-top:16px;">
+    <div class="view-head"><div><h2 id="viewer-title">Parchi mili</h2><div class="subtitle" style="margin:4px 0 0; font-size:14px;" id="viewer-sub">—</div></div><div class="actions" style="margin:0;"><button id="viewer-copy" class="btn btn-primary" type="button">Copy</button><a class="btn" href="./">Nayi</a></div></div>
+
+    <div id="lock-prompt" class="lock-box hidden"><div style="flex:1;"><div style="font-weight:600; font-size:12px; margin-bottom:4px;">🔒 Lock — code dalo</div><input id="lock-input" type="text" inputmode="numeric" placeholder="code" maxlength="6"></div><button id="lock-btn" class="btn btn-primary" type="button">Kholo</button></div>
+
+    <div id="viewer-loading" class="view-paper"><div class="skeleton"><div class="s-line w-80"></div><div class="s-line w-60"></div><div class="s-line w-80"></div><div class="s-line w-40"></div></div></div>
+    <div id="viewer-error" class="error hidden" role="alert"><div>⚠</div><div><h4>Nahi mili</h4><p id="viewer-error-msg">—</p><div class="actions" style="margin-top:6px;"><a class="btn btn-primary" href="./">Nayi banao</a><button id="viewer-retry" class="btn" type="button">Retry</button></div></div></div>
+
+    <div id="viewer-content" class="hidden"></div>
+
+    <div id="reactions" class="reactions hidden">
+      <button class="react-btn" data-emoji="❤️">❤️ <span>0</span></button>
+      <button class="react-btn" data-emoji="😂">😂 <span>0</span></button>
+      <button class="react-btn" data-emoji="🙏">🙏 <span>0</span></button>
+      <button class="react-btn" data-emoji="🔥">🔥 <span>0</span></button>
+      <span style="font-size:11px; color:var(--ink-2); margin-left:6px;" id="views-count">0 views</span>
+      <span style="font-size:11px; color:var(--ink-2);" id="expiry-count">—</span>
+    </div>
+
+    <div id="viewer-actions" class="actions hidden" style="margin-top:10px;">
+      <button id="viewer-wa" class="btn btn-green" type="button">WhatsApp</button>
+      <button id="viewer-tg" class="btn" type="button">Telegram</button>
+      <button id="viewer-dl" class="btn" type="button">Download</button>
+      <button id="viewer-img" class="btn" type="button">Image</button>
+      <button id="viewer-print" class="btn" type="button">Print</button>
+      <button id="viewer-copy-link" class="btn" type="button">Link copy</button>
+      <button id="viewer-edit" class="btn" type="button">Edit</button>
+      <button id="viewer-dup" class="btn" type="button">Duplicate</button>
+      <button id="font-dec-view" class="btn btn-small" type="button">A-</button>
+      <button id="font-inc-view" class="btn btn-small" type="button">A+</button>
+    </div>
+
+    <div id="comments" class="comments hidden">
+      <h4>💬 Comments</h4>
+      <div id="comment-list" class="comment-list"></div>
+      <div class="comment-input"><input id="comment-input" type="text" placeholder="Comment likho..." maxlength="200"><button id="comment-btn" class="btn btn-small" type="button">Bhejo</button></div>
+    </div>
+
+    <div id="burn-note" class="empty hidden" style="margin-top:10px; border-color:var(--accent); background:var(--accent-soft);"><div>🔥</div><div><strong>Burn ho gayi</strong><br>Ab dobara nahi khulega.</div></div>
+  </section>
+
+  <div style="height:80px"></div>
+</main>
+
+<footer><div class="wrap foot"><div><b>Parchi</b> — text • code • file • list • secret • chhota link • reactions • comments • QR • voice • image • edit after sharing<br><span style="display:inline-flex; gap:6px; align-items:center; margin-top:6px; font-family:'Anek Devanagari', sans-serif;"><span style="width:18px; height:12px; display:inline-block; background:linear-gradient(to bottom, #FF9933 33%, #fff 33%, #fff 66%, #138808 66%); border:1px solid #ccc; border-radius:1px;"></span> Made in India • Made in Ghaziabad with chai • 🇮🇳 Atmanirbhar Bharat • No foreign tracking • Data in India-friendly free tiers</span></div><div>© <span id="year">2026</span><br><span style="font-size:10px;">Edit anytime — same link updates</span></div></div></footer>
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+<script>
+(function(){
+  const NS="parchi-gzb";
+  const API="https://mantledb.sh/v2/"+NS;
+  const LITTER="https://litterbox.catbox.moe/resources/internals/api.php";
+  const DRAFT="parchi_draft_v6";
+  const HIST="parchi_hist_v6";
+  const $=s=>document.querySelector(s);
+  const $$=s=>document.querySelectorAll(s);
+
+  // UI refs
+  const modeTabs=$$(".mode-tab");
+  const sections={text:$("#mode-text"), code:$("#mode-code"), file:$("#mode-file"), list:$("#mode-list"), secret:$("#mode-secret")};
+  const titleIn=$("#title-input");
+  const input=$("#paste-input");
+  const codeTitle=$("#code-title");
+  const langSel=$("#lang-select");
+  const codeInput=$("#code-input");
+  const codeGutter=$("#code-gutter");
+  const listTitle=$("#list-title");
+  const listInput=$("#list-input");
+  const secretTitle=$("#secret-title");
+  const secretInput=$("#secret-input");
+  const dropZone=$("#drop-zone");
+  const fileIn=$("#file-input");
+  const fileList=$("#file-list");
+  const fileExpiry=$("#file-expiry");
+  const customIdIn=$("#custom-id");
+  const checkIdBtn=$("#check-id-btn");
+  const customIdStatus=$("#custom-id-status");
+  const expirySel=$("#expiry-select");
+  const pwdIn=$("#pwd-input");
+  const genPwdBtn=$("#gen-pwd");
+  const burnChk=$("#burn-check");
+  const qrChk=$("#qr-check");
+  const viewsLimitSel=$("#views-limit");
+  const fontDec=$("#font-dec");
+  const fontInc=$("#font-inc");
+  const fontLabel=$("#font-size-label");
+  const voiceCheck=$("#voice-check");
+  const voiceBtn=$("#voice-btn");
+  const speakBtn=$("#speak-btn");
+  const createBtn=$("#create-btn");
+  const clearBtn=$("#clear-btn");
+  const errBox=$("#error-box");
+  const errMsg=$("#error-msg");
+  const errClose=$("#error-close");
+  const emptySt=$("#empty-state");
+  const shared=$("#shared-view");
+  const sharedH3=$("#shared-h3");
+  const shareIn=$("#share-link");
+  const shareMeta=$("#share-meta");
+  const shareFlags=$("#share-flags");
+  const shareTitle=$("#shared-title");
+  const copyLink=$("#copy-link-btn");
+  const waBtn=$("#wa-btn");
+  const tgBtn=$("#tg-btn");
+  const mailBtn=$("#mail-btn");
+  const dlBtn=$("#dl-btn");
+  const imgBtn=$("#img-btn");
+  const copyTextBtn=$("#copy-text-btn");
+  const editBtn=$("#edit-btn");
+  const dupBtn=$("#dup-btn");
+  const openBtn=$("#open-link-btn");
+  const newBtn=$("#new-parchi-btn");
+  const qrWrap=$("#qr-wrap");
+  const qrImg=$("#qr-img");
+  const histWrap=$("#history");
+  const histList=$("#hist-list");
+  const histSearch=$("#hist-search");
+  const exportHistBtn=$("#export-hist");
+  const clearHistBtn=$("#clear-hist");
+  const editorPanel=$("#editor-panel");
+  const viewer=$("#viewer-view");
+  const vLoad=$("#viewer-loading");
+  const vErr=$("#viewer-error");
+  const vErrMsg=$("#viewer-error-msg");
+  const vContent=$("#viewer-content");
+  const vCopy=$("#viewer-copy");
+  const vWa=$("#viewer-wa");
+  const vTg=$("#viewer-tg");
+  const vDl=$("#viewer-dl");
+  const vImg=$("#viewer-img");
+  const vPrint=$("#viewer-print");
+  const vCopyLink=$("#viewer-copy-link");
+  const vEdit=$("#viewer-edit");
+  const vDup=$("#viewer-dup");
+  const vActions=$("#viewer-actions");
+  const vRetry=$("#viewer-retry");
+  const lockPrompt=$("#lock-prompt");
+  const lockIn=$("#lock-input");
+  const lockBtn=$("#lock-btn");
+  const burnNote=$("#burn-note");
+  const reactions=$("#reactions");
+  const viewsCount=$("#views-count");
+  const expiryCount=$("#expiry-count");
+  const commentsWrap=$("#comments");
+  const commentList=$("#comment-list");
+  const commentIn=$("#comment-input");
+  const commentBtn=$("#comment-btn");
+  const fontDecView=$("#font-dec-view");
+  const fontIncView=$("#font-inc-view");
+  const toastStack=$("#toast-stack");
+
+  let curMode="text";
+  let lastUrl="", lastId="", lastData=null;
+  let selectedFiles=[];
+  let editingId=null;
+  let fontSize=18;
+  const editBanner=$("#edit-banner");
+  const editBannerId=$("#edit-banner-id");
+  function showEditBanner(id){
+    if(editBanner){ editBanner.classList.remove("hidden"); if(editBannerId) editBannerId.textContent="• "+id+" • ?edit="+id; }
+  }
+  function hideEditBanner(){ if(editBanner) editBanner.classList.add("hidden"); }
+
+  function toast(m){
+    const el=document.createElement("div"); el.className="toast"; el.textContent=m;
+    toastStack.appendChild(el); requestAnimationFrame(()=>el.classList.add("show"));
+    setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=>el.remove(),200); }, 2600);
+  }
+  function shortId(len=7){
+    const chars="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    const a=new Uint8Array(len); crypto.getRandomValues(a);
+    let s=""; for(let i=0;i<len;i++) s+=chars[a[i]%chars.length];
+    return s;
+  }
+  function setMode(m){
+    curMode=m;
+    modeTabs.forEach(t=>{ const is=t.dataset.mode===m; t.classList.toggle("active", is); t.setAttribute("aria-selected", is); });
+    Object.entries(sections).forEach(([k,el])=>el.classList.toggle("hidden", k!==m));
+    if(m==="secret"){ burnChk.checked=true; viewsLimitSel.value="1"; } 
+    updateCounts();
+  }
+  modeTabs.forEach(t=>t.addEventListener("click", ()=>setMode(t.dataset.mode)));
+
+  function updateCounts(){
+    if(curMode==="text"){
+      const ch=input.value.length; const ln=input.value? input.value.split("\n").length:1;
+      const words=input.value.trim()? input.value.trim().split(/\s+/).length:0;
+      $("#char-count").textContent=ch+" akshar"; $("#line-count").textContent=ln+" line"; $("#word-count").textContent=words+" words";
+      emptySt.classList.toggle("hidden", ch!==0 || titleIn.value.trim()!=="");
+      createBtn.disabled=!(ch>0);
+    }else if(curMode==="code"){
+      const ch=codeInput.value.length; const ln=codeInput.value? codeInput.value.split("\n").length:1;
+      $("#code-char").textContent=ch+" chars"; $("#code-lines").textContent=ln+" lines";
+      codeGutter.innerHTML=Array.from({length:ln}, (_,i)=>i+1).join("<br>");
+      emptySt.classList.toggle("hidden", ch!==0 || codeTitle.value.trim()!=="");
+      createBtn.disabled=!(ch>0);
+    }else if(curMode==="file"){
+      emptySt.classList.toggle("hidden", selectedFiles.length>0);
+      createBtn.disabled=selectedFiles.length===0;
+    }else if(curMode==="list"){
+      const ch=listInput.value.trim().length;
+      emptySt.classList.toggle("hidden", ch!==0 || listTitle.value.trim()!=="");
+      createBtn.disabled=!(ch>0);
+    }else if(curMode==="secret"){
+      const ch=secretInput.value.length;
+      $("#secret-char").textContent=ch+" akshar";
+      emptySt.classList.toggle("hidden", ch!==0 || secretTitle.value.trim()!=="");
+      createBtn.disabled=!(ch>0);
+    }
+    try{
+      localStorage.setItem(DRAFT, JSON.stringify({
+        mode:curMode, title:titleIn.value, text:input.value, codeTitle:codeTitle.value, code:codeInput.value, lang:langSel.value,
+        listTitle:listTitle.value, list:listInput.value, secretTitle:secretTitle.value, secret:secretInput.value,
+        customId:customIdIn.value, expiry:expirySel.value, pwd:pwdIn.value, burn:burnChk.checked, viewsLimit:viewsLimitSel.value
+      }));
+    }catch{}
+  }
+
+  // paper colors
+  $$(".dot").forEach(d=>{
+    d.addEventListener("click", ()=>{
+      $$(".dot").forEach(x=>x.classList.remove("active"));
+      d.classList.add("active");
+      const col=d.dataset.paper;
+      document.documentElement.style.setProperty("--paper-bg", col);
+    });
+  });
+
+  // font size
+  function setFontSize(s){
+    fontSize=Math.max(12, Math.min(28, s));
+    document.documentElement.style.setProperty("--font-size", fontSize+"px");
+    fontLabel.textContent=fontSize+"px";
+  }
+  fontDec.addEventListener("click", ()=>setFontSize(fontSize-1));
+  fontInc.addEventListener("click", ()=>setFontSize(fontSize+1));
+  fontDecView.addEventListener("click", ()=>{ fontSize=Math.max(12, fontSize-1); document.querySelectorAll(".view-text").forEach(el=>el.style.fontSize=fontSize+"px"); });
+  fontIncView.addEventListener("click", ()=>{ fontSize=Math.min(28, fontSize+1); document.querySelectorAll(".view-text").forEach(el=>el.style.fontSize=fontSize+"px"); });
+
+  // voice input
+  let recognition=null;
+  if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+    const SR=window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition=new SR();
+    recognition.lang="en-IN"; recognition.interimResults=false;
+    recognition.onresult=e=>{
+      const txt=e.results[0][0].transcript;
+      if(curMode==="text") input.value+=(input.value?" ":"")+txt;
+      else if(curMode==="code") codeInput.value+=(codeInput.value?"\n":"")+txt;
+      else if(curMode==="list") listInput.value+=(listInput.value?"\n":"")+txt;
+      else if(curMode==="secret") secretInput.value+=(secretInput.value?" ":"")+txt;
+      updateCounts(); toast("Bola hua likh diya");
+    };
+    recognition.onerror=()=>toast("Voice nahi chala");
+  }
+  voiceCheck.addEventListener("change", ()=>{ voiceBtn.classList.toggle("hidden", !voiceCheck.checked); });
+  voiceBtn.addEventListener("click", ()=>{
+    if(!recognition){ toast("Voice support nahi"); return; }
+    try{ recognition.start(); toast("Bolo..."); }catch{ toast("Pehle se chal raha"); }
+  });
+  speakBtn.addEventListener("click", ()=>{
+    const txt=curMode==="text"? input.value : curMode==="code"? codeInput.value : curMode==="list"? listInput.value : curMode==="secret"? secretInput.value : "";
+    if(!txt.trim()){ toast("Pehle likho"); return; }
+    const u=new SpeechSynthesisUtterance(txt.slice(0,500));
+    u.lang="en-IN"; speechSynthesis.speak(u);
+  });
+
+  // file handling
+  function renderFiles(){
+    fileList.innerHTML="";
+    selectedFiles.forEach((f,i)=>{
+      const div=document.createElement("div"); div.className="file-item";
+      div.innerHTML="<div><b>"+f.name+"</b><br><small>"+(f.size/1024/1024).toFixed(2)+" MB • "+f.type+"</small></div><button class='btn btn-small' data-i='"+i+"'>Hatao</button>";
+      fileList.appendChild(div);
+    });
+    fileList.querySelectorAll("button").forEach(b=>{
+      b.addEventListener("click", ()=>{ selectedFiles.splice(parseInt(b.dataset.i),1); renderFiles(); updateCounts(); });
+    });
+  }
+  function handleFiles(files){
+    for(const f of files){
+      if(f.size>1024*1024*1024){ toast(f.name+" 1GB se zyada"); continue; }
+      selectedFiles.push(f);
+    }
+    if(selectedFiles.length>5){ selectedFiles=selectedFiles.slice(0,5); toast("Max 5 files"); }
+    renderFiles(); updateCounts();
+  }
+  dropZone.addEventListener("click", ()=>fileIn.click());
+  dropZone.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); fileIn.click(); } });
+  fileIn.addEventListener("change", e=>handleFiles(e.target.files));
+  dropZone.addEventListener("dragover", e=>{ e.preventDefault(); dropZone.classList.add("dragover"); });
+  dropZone.addEventListener("dragleave", ()=>dropZone.classList.remove("dragover"));
+  dropZone.addEventListener("drop", e=>{ e.preventDefault(); dropZone.classList.remove("dragover"); handleFiles(e.dataTransfer.files); });
+
+  // custom ID check
+  checkIdBtn.addEventListener("click", async ()=>{
+    const cid=customIdIn.value.trim();
+    if(!cid){ customIdStatus.textContent="Khali hai"; return; }
+    if(!/^[a-zA-Z0-9-_]{3,20}$/.test(cid)){ customIdStatus.textContent="3-20, a-z 0-9 - _"; return; }
+    customIdStatus.textContent="Check...";
+    try{
+      const r=await fetch(API+"/"+encodeURIComponent(cid));
+      if(r.status===404) customIdStatus.textContent="✅ Available — chhota link banega";
+      else customIdStatus.textContent="❌ Taken — aur try karo";
+    }catch{ customIdStatus.textContent="Net error"; }
+  });
+  genPwdBtn.addEventListener("click", ()=>{
+    const c=Math.floor(1000+Math.random()*9000).toString();
+    pwdIn.value=c; toast("Code: "+c); updateCounts();
+  });
+
+  function saveHist(entry){
+    try{
+      const raw=localStorage.getItem(HIST); const arr=raw? JSON.parse(raw):[];
+      arr.unshift(entry);
+      const uniq=[]; const seen=new Set();
+      for(const e of arr){ if(!seen.has(e.id)){ uniq.push(e); seen.add(e.id);} }
+      localStorage.setItem(HIST, JSON.stringify(uniq.slice(0,30)));
+      renderHist();
+    }catch{}
+  }
+  function renderHist(){
+    try{
+      const raw=localStorage.getItem(HIST); if(!raw){ histWrap.classList.add("hidden"); return; }
+      let arr=JSON.parse(raw);
+      const q=histSearch.value.trim().toLowerCase();
+      if(q) arr=arr.filter(e=> (e.title+e.id+e.type).toLowerCase().includes(q));
+      if(!arr.length){ histWrap.classList.add("hidden"); return; }
+      histWrap.classList.remove("hidden"); histList.innerHTML="";
+      arr.forEach(e=>{
+        const div=document.createElement("div"); div.className="hist-item";
+        const icons={text:"📝", code:"💻", file:"📎", list:"✅", secret:"🔒"};
+        div.innerHTML="<div><b>"+(icons[e.type]||"📝")+" "+(e.title? e.title.slice(0,22) : "Bina title")+"</b><br><small>"+e.id+" • "+e.date+" • "+e.type+"</small></div><span class='hist-type'>"+e.type+"</span>";
+        div.addEventListener("click", ()=>{ location.hash=e.id; location.reload(); });
+        histList.appendChild(div);
+      });
+    }catch{}
+  }
+  histSearch.addEventListener("input", renderHist);
+  exportHistBtn.addEventListener("click", ()=>{
+    try{
+      const raw=localStorage.getItem(HIST)||"[]";
+      const blob=new Blob([raw], {type:"application/json"});
+      const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="parchi-history.json"; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    }catch{}
+  });
+  clearHistBtn.addEventListener("click", ()=>{ if(confirm("History clear?")){ localStorage.removeItem(HIST); renderHist(); toast("Clear ho gaya"); } });
+
+  function qrUrlFor(url){ return "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data="+encodeURIComponent(url); }
+  function downloadTxt(name, text){
+    const blob=new Blob([text], {type:"text/plain;charset=utf-8"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
+    document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function showErr(m){ errMsg.textContent=m; errBox.classList.remove("hidden"); errBox.scrollIntoView({behavior:"smooth", block:"center"}); }
+  function hideErr(){ errBox.classList.add("hidden"); }
+
+  // image from text
+  function makeImage(text, title){
+    const canvas=document.createElement("canvas");
+    const ctx=canvas.getContext("2d");
+    const w=720; const lines=text.split("\n"); const h=Math.max(300, 120+lines.length*28);
+    canvas.width=w; canvas.height=h;
+    ctx.fillStyle="#FFF6D6"; ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle="#E6D38A"; ctx.lineWidth=1; ctx.strokeRect(0,0,w,h);
+    // red margin
+    ctx.strokeStyle="#E8A0A0"; ctx.beginPath(); ctx.moveTo(46,0); ctx.lineTo(46,h); ctx.stroke();
+    // blue lines
+    ctx.strokeStyle="#9DB4D3"; ctx.globalAlpha=0.5;
+    for(let y=28; y<h; y+=28){ ctx.beginPath(); ctx.moveTo(46,y); ctx.lineTo(w,y); ctx.stroke(); }
+    ctx.globalAlpha=1;
+    ctx.fillStyle="#211E1A"; ctx.font="700 18px Kalam, cursive";
+    if(title) ctx.fillText(title.slice(0,60), 60, 40);
+    ctx.font="16px Kalam, cursive";
+    let y=70;
+    for(const line of lines.slice(0,50)){
+      ctx.fillText(line.slice(0,80), 60, y); y+=28;
+    }
+    return canvas.toDataURL("image/png");
+  }
+
+  async function make(){
+    hideErr();
+    const pwd=pwdIn.value.trim();
+    if(pwd && !/^\d{4,6}$/.test(pwd)){ showErr("Lock 4-6 ank"); return; }
+    let customId=customIdIn.value.trim();
+    if(customId && !/^[a-zA-Z0-9-_]{3,20}$/.test(customId)){ showErr("Custom ID 3-20 a-z 0-9 - _"); return; }
+
+    let payload=null;
+    let id=customId || shortId(7);
+    if(!customId){
+      for(let i=0;i<3;i++){
+        try{
+          const chk=await fetch(API+"/"+encodeURIComponent(id));
+          if(chk.status===404) break;
+          id=shortId(7);
+        }catch{ break; }
+      }
+    }
+
+    const expDays=parseInt(expirySel.value,10)||30;
+    const expAt=Date.now()+expDays*86400000;
+    const viewsLimit=parseInt(viewsLimitSel.value,10)||0;
+
+    // if editing, use editingId
+    if(editingId){ id=editingId; }
+
+    try{
+      if(curMode==="file"){
+        if(!editingId && selectedFiles.length===0){ showErr("File chuno"); return; }
+        createBtn.disabled=true; createBtn.textContent="Uploading files...";
+        const filesData=[];
+        for(const f of selectedFiles){
+          const fd=new FormData(); fd.append("reqtype","fileupload"); fd.append("time", fileExpiry.value); fd.append("fileToUpload", f);
+          const upRes=await fetch(LITTER, {method:"POST", body:fd});
+          if(!upRes.ok) throw new Error("upload fail");
+          const fileUrl=(await upRes.text()).trim();
+          if(!fileUrl.startsWith("http")) throw new Error(fileUrl);
+          filesData.push({url:fileUrl, name:f.name, size:f.size, type:f.type});
+        }
+        payload={
+          type:"file", files:filesData,
+          title: titleIn.value.trim().slice(0,80) || (filesData[0]? filesData[0].name : "File"),
+          c:new Date().toISOString(), exp:expAt, burn:burnChk.checked, pwd:pwd||"", views:0, viewsLimit, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
+        };
+      }else if(curMode==="code"){
+        const t=codeInput.value.trim(); if(!t && !editingId){ showErr("Code likho"); return; }
+        payload={
+          type:"code", t:codeInput.value, title:codeTitle.value.trim().slice(0,80), lang:langSel.value,
+          c:new Date().toISOString(), exp:expAt, burn:burnChk.checked, pwd:pwd||"", views:0, viewsLimit, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
+        };
+      }else if(curMode==="list"){
+        const t=listInput.value.trim(); if(!t && !editingId){ showErr("List likho"); return; }
+        payload={
+          type:"list", t:listInput.value, title:listTitle.value.trim().slice(0,80),
+          c:new Date().toISOString(), exp:expAt, burn:burnChk.checked, pwd:pwd||"", views:0, viewsLimit, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
+        };
+      }else if(curMode==="secret"){
+        const t=secretInput.value.trim(); if(!t && !editingId){ showErr("Secret likho"); return; }
+        payload={
+          type:"secret", t:secretInput.value, title:secretTitle.value.trim().slice(0,80),
+          c:new Date().toISOString(), exp:expAt, burn:true, pwd:pwd||"", views:0, viewsLimit: viewsLimit||1, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
+        };
+      }else{
+        const t=input.value.trim(); if(!t && !editingId){ showErr("Pehle kuch likho"); return; }
+        payload={
+          type:"text", t:input.value, title:titleIn.value.trim().slice(0,80),
+          c:new Date().toISOString(), exp:expAt, burn:burnChk.checked, pwd:pwd||"", views:0, viewsLimit, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
+        };
+      }
+
+      // if editing, preserve views, reactions, comments
+      if(editingId && lastData){
+        payload.views=lastData.views||0;
+        payload.reactions=lastData.reactions||{heart:0, laugh:0, pray:0, fire:0};
+        payload.comments=lastData.comments||[];
+      }
+
+      createBtn.disabled=true; createBtn.textContent="Bana rahe hain…";
+      const r=await fetch(API+"/"+encodeURIComponent(id), {
+        method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
+      });
+      if(!r.ok) throw new Error("save fail");
+
+      const url=location.origin+location.pathname+"#"+id;
+      lastUrl=url; lastId=id; lastData=payload;
+
+      shareIn.value=url;
+      shareTitle.textContent=payload.title? "📝 "+payload.title : "";
+      const flags=[];
+      if(payload.pwd) flags.push("🔒 lock");
+      if(payload.burn) flags.push("🔥 burn");
+      flags.push(payload.type+" • "+expDays+"d");
+      if(payload.type==="file") flags.push(fileExpiry.value);
+      if(payload.viewsLimit) flags.push(payload.viewsLimit+" views");
+      shareMeta.textContent=id+" • "+new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short"})+" • "+(payload.type==="file"? payload.files.length+" file(s)" : (payload.t? payload.t.length+" akshar" : ""));
+      shareFlags.textContent=flags.join(" • ");
+      const titles={text:"Link ready — chhota wala!", code:"Code link ready!", file:"File link ready!", list:"List link ready!", secret:"Secret link ready!"};
+      sharedH3.textContent=titles[payload.type]||"Link ready!";
+      if(qrChk.checked){ qrWrap.classList.remove("hidden"); qrImg.src=qrUrlFor(url); } else qrWrap.classList.add("hidden");
+
+      shared.classList.remove("hidden");
+      shared.scrollIntoView({behavior:"smooth", block:"start"});
+      toast("Chhota link ban gaya!");
+
+      saveHist({id, title:payload.title|| (payload.files? payload.files[0].name : payload.t.slice(0,24)), date:new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short"}), type:payload.type, chars:payload.type==="file"? payload.files.length : (payload.t? payload.t.length:0)});
+
+      editingId=null; hideEditBanner();
+      try{ localStorage.removeItem(DRAFT); }catch{}
+    }catch(e){
+      showErr("Link nahi bana — "+(e.message||"net check karo"));
+    }finally{
+      createBtn.textContent="Chhota link banao"; createBtn.disabled=false; updateCounts();
+    }
+  }
+
+  function copy(txt){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(()=>toast("Copy ho gaya!"), ()=>fallback(txt));
+    }else fallback(txt);
+  }
+  function fallback(txt){
+    const ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.left="-9999px";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); toast("Copy ho gaya!"); }catch{ toast("Copy nahi hua"); }
+    ta.remove();
+  }
+  function getId(){
+    const h=location.hash.slice(1).trim(); if(h) return h.split("?")[0].split("&")[0];
+    const p=new URLSearchParams(location.search); return p.get("s")||p.get("id")||"";
+  }
+  function getEditId(){
+    const p=new URLSearchParams(location.search); return p.get("edit")||"";
+  }
+
+  let pendingData=null;
+
+  async function loadEdit(){
+    const eid=getEditId();
+    if(!eid) return false;
+    try{
+      const r=await fetch(API+"/"+encodeURIComponent(eid));
+      if(!r.ok) throw new Error();
+      const d=await r.json();
+      editingId=eid;
+      lastData=d;
+      const type=d.type||"text";
+      setMode(type==="secret"? "secret" : type==="list"? "list" : type==="file"? "file" : type==="code"? "code" : "text");
+      if(type==="text"){ titleIn.value=d.title||""; input.value=d.t||""; }
+      else if(type==="code"){ codeTitle.value=d.title||""; codeInput.value=d.t||""; langSel.value=d.lang||"plaintext"; }
+      else if(type==="list"){ listTitle.value=d.title||""; listInput.value=d.t||""; }
+      else if(type==="secret"){ secretTitle.value=d.title||""; secretInput.value=d.t||""; }
+      customIdIn.value=eid;
+      if(d.pwd) pwdIn.value=d.pwd;
+      if(d.burn) burnChk.checked=true;
+      if(d.exp){
+        const days=Math.ceil((d.exp-Date.now())/86400000);
+        if(days<=1) expirySel.value="1"; else if(days<=7) expirySel.value="7"; else expirySel.value="30";
+      }
+      editorPanel.classList.remove("hidden");
+      document.querySelector(".mode-tabs").classList.remove("hidden");
+      viewer.classList.add("hidden");
+      showEditBanner(eid);
+      updateCounts();
+      toast("Edit mode — "+eid+" — save karega toh same link update hoga 🇮🇳");
+      return true;
+    }catch{
+      toast("Edit wali parchi nahi mili");
+      return false;
+    }
+  }
+
+  async function load(){
+    const sid=getId(); if(!sid) return false;
+    editorPanel.classList.add("hidden"); document.querySelector(".mode-tabs").classList.add("hidden");
+    viewer.classList.remove("hidden");
+    vLoad.classList.remove("hidden"); vErr.classList.add("hidden"); vContent.classList.add("hidden"); vActions.classList.add("hidden"); lockPrompt.classList.add("hidden"); burnNote.classList.add("hidden"); reactions.classList.add("hidden"); commentsWrap.classList.add("hidden");
+
+    if(sid.includes("/")){
+      const shortId=sid.split("/").pop();
+      try{
+        const r=await fetch(API+"/"+encodeURIComponent(shortId));
+        if(r.ok){ const d=await r.json(); await handleView(shortId, d); return true; }
+      }catch{}
+      try{
+        const r2=await fetch("https://api.jsonstorage.net/v1/json/"+sid);
+        if(r2.ok){ const d2=await r2.json(); await handleView(sid, {type:"text", t:d2.t||d2.text||JSON.stringify(d2,null,2), title:""}); return true; }
+      }catch{}
+      vLoad.classList.add("hidden"); vErr.classList.remove("hidden"); return true;
+    }
+
+    try{
+      const r=await fetch(API+"/"+encodeURIComponent(sid));
+      if(!r.ok){
+        const txt=await r.text();
+        if(txt.includes("not found")||txt.includes("Path not found")) throw new Error("notfound");
+        throw new Error("net");
+      }
+      const d=await r.json();
+      if(d.exp && Date.now()>d.exp){
+        try{ await fetch(API+"/"+encodeURIComponent(sid), {method:"DELETE"}); }catch{}
+        throw new Error("expired");
+      }
+      if(d.viewsLimit && d.views>=d.viewsLimit){
+        try{ await fetch(API+"/"+encodeURIComponent(sid), {method:"DELETE"}); }catch{}
+        throw new Error("limit");
+      }
+      if(d.pwd){
+        pendingData=d; lastId=sid;
+        vLoad.classList.add("hidden"); lockPrompt.classList.remove("hidden");
+        $("#viewer-sub").textContent="🔒 Lock lagi hai";
+        return true;
+      }
+      await handleView(sid, d);
+    }catch(e){
+      vLoad.classList.add("hidden"); vErr.classList.remove("hidden");
+      if(e.message==="expired") $("#viewer-error-msg").textContent="Expire ho gayi — auto delete.";
+      else if(e.message==="limit") $("#viewer-error-msg").textContent="Views limit khatam — auto delete.";
+      else if(e.message==="notfound") $("#viewer-error-msg").textContent="Nahi mili — 30 din baad delete hoti hai ya link galat.";
+      else $("#viewer-error-msg").textContent="Load nahi hua — net check karo.";
+    }
+    return true;
+  }
+
+  async function handleView(id, data){
+    lastId=id; lastUrl=location.origin+location.pathname+"#"+id; lastData=data;
+    // increment views
+    try{
+      const newViews=(data.views||0)+1;
+      const updated={...data, views:newViews};
+      // don't await to keep fast
+      fetch(API+"/"+encodeURIComponent(id), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(updated)}).catch(()=>{});
+      data.views=newViews;
+    }catch{}
+
+    // render
+    vContent.innerHTML="";
+    let el;
+    if(data.type==="file"){
+      el=document.createElement("div");
+      const files=data.files||[];
+      el.innerHTML=files.map(f=>'<div class="file-view" style="margin-bottom:8px;"><div class="file-icon">📎</div><div class="file-info"><b>'+f.name+'</b><small>'+(f.size/1024/1024).toFixed(2)+' MB • '+f.type+' • <a href="'+f.url+'" target="_blank">Direct</a></small><div style="margin-top:6px;"><a class="btn btn-primary btn-small" href="'+f.url+'" target="_blank">Download</a></div></div></div>').join("") + (data.title? '<div style="margin-top:8px; font-family:Kalam; font-size:15px;"><b>'+data.title+'</b></div>' : "");
+      // image preview
+      files.forEach(f=>{
+        if(f.type && f.type.startsWith("image/")){
+          const img=document.createElement("img"); img.src=f.url; img.style.maxWidth="100%"; img.style.marginTop="8px"; img.style.borderRadius="4px"; img.style.border="1px solid var(--rule)"; el.appendChild(img);
+        }
+      });
+    }else if(data.type==="code"){
+      const wrap=document.createElement("div"); wrap.className="code-view-wrap";
+      const gutter=document.createElement("div"); gutter.className="code-gutter-view";
+      const lines=(data.t||"").split("\n").length;
+      gutter.innerHTML=Array.from({length:lines}, (_,i)=>i+1).join("<br>");
+      const code=document.createElement("pre"); code.className="code-content"; code.textContent=data.t||"";
+      wrap.appendChild(gutter); wrap.appendChild(code);
+      el=wrap;
+      const langDiv=document.createElement("div"); langDiv.style.fontSize="11px"; langDiv.style.color="var(--ink-2)"; langDiv.style.marginBottom="6px"; langDiv.textContent="Language: "+(data.lang||"plain")+" • "+(data.t? data.t.length+" chars" : "");
+      vContent.appendChild(langDiv);
+    }else if(data.type==="list"){
+      el=document.createElement("div"); el.className="view-paper";
+      const title=data.title? '<div style="font-family:Anek Devanagari; font-weight:600; font-size:16px; padding:10px 12px 0 56px; position:relative; z-index:1;">'+data.title+'</div>' : "";
+      const items=(data.t||"").split("\n").filter(Boolean);
+      const listHtml=items.map((it,i)=>{
+        const checked=localStorage.getItem("check_"+id+"_"+i)==="1";
+        return '<div style="display:flex; gap:8px; align-items:flex-start; padding:4px 0;"><input type="checkbox" data-i="'+i+'" '+(checked?"checked":"")+' style="margin-top:6px;"><span style="'+(checked?"text-decoration:line-through; opacity:0.6;":"")+'">'+it+'</span></div>';
+      }).join("");
+      el.innerHTML=title+'<div class="view-text" style="min-height:120px;">'+listHtml+'</div>';
+      // add listeners after
+      setTimeout(()=>{
+        el.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+          cb.addEventListener("change", ()=>{
+            const idx=cb.dataset.i;
+            localStorage.setItem("check_"+id+"_"+idx, cb.checked?"1":"0");
+            const span=cb.nextElementSibling;
+            if(cb.checked){ span.style.textDecoration="line-through"; span.style.opacity="0.6"; } else { span.style.textDecoration="none"; span.style.opacity="1"; }
+          });
+        });
+      }, 0);
+    }else{
+      el=document.createElement("div"); el.className="view-paper";
+      if(data.paper) el.style.background=data.paper;
+      const titleHtml=data.title? '<div style="font-family:Anek Devanagari; font-weight:600; font-size:16px; padding:10px 12px 0 56px; position:relative; z-index:1;">'+data.title+'</div>' : "";
+      const txt=document.createElement("div"); txt.className="view-text"; txt.textContent=data.t||""; if(data.paper) txt.parentElement?.style && (el.style.background=data.paper);
+      el.innerHTML=titleHtml;
+      el.appendChild(txt);
+      if(data.paper){
+        document.documentElement.style.setProperty("--paper-bg", data.paper);
+      }
+    }
+    if(el) vContent.appendChild(el);
+
+    // meta
+    $("#viewer-title").textContent=data.title? data.title : (data.type==="file"? "File mili hai" : data.type==="code"? "Code mila hai" : data.type==="list"? "List mili hai" : data.type==="secret"? "Secret parchi" : "Parchi mili hai");
+    const rem=data.exp? Math.max(0, data.exp-Date.now()) : 0;
+    const remText=rem? (rem<3600000? Math.ceil(rem/60000)+" min bacha" : rem<86400000? Math.ceil(rem/3600000)+" ghante bacha" : Math.ceil(rem/86400000)+" din bacha") : "";
+    $("#viewer-sub").textContent=(data.type? data.type+" • " : "") + (data.c? new Date(data.c).toLocaleDateString("en-IN",{day:"2-digit",month:"short"}) : "") + (remText? " • "+remText : "") + (data.burn? " • 🔥" : "") + (data.pwd? " • 🔒" : "");
+
+    viewsCount.textContent=(data.views||1)+" views";
+    expiryCount.textContent=remText;
+    reactions.classList.remove("hidden");
+    // set reaction counts
+    const reacts=data.reactions||{heart:0, laugh:0, pray:0, fire:0};
+    reactions.querySelectorAll(".react-btn").forEach(b=>{
+      const emo=b.dataset.emoji;
+      const key={ "❤️":"heart", "😂":"laugh", "🙏":"pray", "🔥":"fire" }[emo];
+      b.querySelector("span").textContent=reacts[key]||0;
+    });
+
+    commentsWrap.classList.remove("hidden");
+    renderComments(data.comments||[]);
+
+    vLoad.classList.add("hidden"); vContent.classList.remove("hidden"); vActions.classList.remove("hidden");
+
+    if(data.burn){
+      try{ await fetch(API+"/"+encodeURIComponent(id), {method:"DELETE"}); }catch{}
+      burnNote.classList.remove("hidden");
+    }
+    document.title=(data.title? data.title+" — " : "")+"Parchi";
+  }
+
+  function renderComments(comments){
+    commentList.innerHTML="";
+    comments.forEach(c=>{
+      const div=document.createElement("div"); div.className="comment";
+      div.innerHTML="<div>"+c.text+"</div><small>"+new Date(c.c).toLocaleString("en-IN")+"</small>";
+      commentList.appendChild(div);
+    });
+  }
+
+  // reactions
+  reactions.addEventListener("click", async e=>{
+    const btn=e.target.closest(".react-btn"); if(!btn) return;
+    const emoji=btn.dataset.emoji;
+    const key={ "❤️":"heart", "😂":"laugh", "🙏":"pray", "🔥":"fire" }[emoji];
+    if(!lastData) return;
+    lastData.reactions=lastData.reactions||{heart:0, laugh:0, pray:0, fire:0};
+    lastData.reactions[key]=(lastData.reactions[key]||0)+1;
+    btn.querySelector("span").textContent=lastData.reactions[key];
+    btn.classList.add("active");
+    try{
+      await fetch(API+"/"+encodeURIComponent(lastId), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(lastData)});
+      toast(emoji+" reaction diya!");
+    }catch{}
+  });
+
+  // comments
+  commentBtn.addEventListener("click", async ()=>{
+    const txt=commentIn.value.trim(); if(!txt){ toast("Comment likho"); return; }
+    if(!lastData) return;
+    const comment={id:shortId(5), text:txt, c:new Date().toISOString()};
+    lastData.comments=lastData.comments||[];
+    lastData.comments.push(comment);
+    renderComments(lastData.comments);
+    commentIn.value="";
+    try{
+      await fetch(API+"/"+encodeURIComponent(lastId), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(lastData)});
+      toast("Comment jod diya");
+    }catch{ toast("Comment local hi rahega"); }
+  });
+  commentIn.addEventListener("keydown", e=>{ if(e.key==="Enter") commentBtn.click(); });
+
+  // prettify JSON
+  $("#prettify-btn").addEventListener("click", ()=>{
+    try{
+      const obj=JSON.parse(codeInput.value);
+      codeInput.value=JSON.stringify(obj, null, 2);
+      updateCounts(); toast("Prettify ho gaya");
+    }catch{ toast("Valid JSON nahi"); }
+  });
+
+  // events
+  input.addEventListener("input", updateCounts);
+  titleIn.addEventListener("input", updateCounts);
+  codeInput.addEventListener("input", updateCounts);
+  codeTitle.addEventListener("input", updateCounts);
+  langSel.addEventListener("change", updateCounts);
+  listTitle.addEventListener("input", updateCounts);
+  listInput.addEventListener("input", updateCounts);
+  secretTitle.addEventListener("input", updateCounts);
+  secretInput.addEventListener("input", updateCounts);
+  customIdIn.addEventListener("input", ()=>{ customIdStatus.textContent=""; });
+
+  clearBtn.addEventListener("click", ()=>{
+    if(curMode==="text"){ input.value=""; titleIn.value=""; }
+    else if(curMode==="code"){ codeInput.value=""; codeTitle.value=""; }
+    else if(curMode==="file"){ selectedFiles=[]; fileList.innerHTML=""; fileIn.value=""; }
+    else if(curMode==="list"){ listInput.value=""; listTitle.value=""; }
+    else if(curMode==="secret"){ secretInput.value=""; secretTitle.value=""; }
+    customIdIn.value=""; updateCounts(); shared.classList.add("hidden"); hideErr(); toast("Saaf"); editingId=null; hideEditBanner();
+  });
+  createBtn.addEventListener("click", make);
+  errClose.addEventListener("click", hideErr);
+
+  copyLink.addEventListener("click", ()=>{ if(shareIn.value) copy(shareIn.value); });
+  waBtn.addEventListener("click", ()=>{ if(lastUrl) window.open("https://wa.me/?text="+encodeURIComponent((lastData && lastData.title? lastData.title+": " : "")+"Ye dekho: "+lastUrl), "_blank"); });
+  tgBtn.addEventListener("click", ()=>{ if(lastUrl) window.open("https://t.me/share/url?url="+encodeURIComponent(lastUrl)+"&text="+encodeURIComponent(lastData && lastData.title? lastData.title : "Parchi"), "_blank"); });
+  mailBtn.addEventListener("click", ()=>{ if(lastUrl) window.open("mailto:?subject="+encodeURIComponent(lastData && lastData.title? lastData.title : "Parchi")+"&body="+encodeURIComponent(lastUrl), "_blank"); });
+  dlBtn.addEventListener("click", ()=>{
+    if(!lastData) return;
+    if(lastData.type==="file"){ lastData.files.forEach(f=>window.open(f.url, "_blank")); }
+    else{ const name=(lastData.title? lastData.title.replace(/[^a-z0-9]/gi,"_") : "parchi")+".txt"; downloadTxt(name, lastData.t||""); }
+  });
+  imgBtn.addEventListener("click", ()=>{
+    if(!lastData) return;
+    const txt=lastData.type==="file"? lastData.files.map(f=>f.name).join("\n") : lastData.t||"";
+    const dataUrl=makeImage(txt, lastData.title||"");
+    const a=document.createElement("a"); a.href=dataUrl; a.download=(lastData.title||"parchi")+".png"; document.body.appendChild(a); a.click(); setTimeout(()=>a.remove(), 500); toast("Image ban gaya");
+  });
+  copyTextBtn.addEventListener("click", ()=>{
+    if(!lastData) return;
+    if(lastData.type==="file") copy(lastData.files.map(f=>f.url).join("\n"));
+    else copy(lastData.t||"");
+  });
+  editBtn.addEventListener("click", ()=>{
+    if(!lastData || !lastId) return;
+    editingId=lastId;
+    // load data into editor
+    const type=lastData.type||"text";
+    setMode(type==="secret"? "secret" : type==="list"? "list" : type==="file"? "file" : type==="code"? "code" : "text");
+    if(type==="text"){ titleIn.value=lastData.title||""; input.value=lastData.t||""; }
+    else if(type==="code"){ codeTitle.value=lastData.title||""; codeInput.value=lastData.t||""; langSel.value=lastData.lang||"plaintext"; }
+    else if(type==="list"){ listTitle.value=lastData.title||""; listInput.value=lastData.t||""; }
+    else if(type==="secret"){ secretTitle.value=lastData.title||""; secretInput.value=lastData.t||""; }
+    else if(type==="file"){ titleIn.value=lastData.title||""; }
+    customIdIn.value=lastId;
+    editorPanel.classList.remove("hidden"); document.querySelector(".mode-tabs").classList.remove("hidden"); viewer.classList.add("hidden"); history.replaceState(null,"",location.pathname);
+    shared.classList.add("hidden"); showEditBanner(lastId); updateCounts(); toast("Edit mode — save karke update hoga 🇮🇳");
+  });
+  dupBtn.addEventListener("click", ()=>{
+    if(!lastData) return;
+    const dup={...lastData, c:new Date().toISOString(), views:0, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[]};
+    // create new
+    lastData=dup; editingId=null; customIdIn.value=""; hideEditBanner();
+    const type=dup.type||"text";
+    setMode(type==="secret"? "secret" : type==="list"? "list" : type==="file"? "file" : type==="code"? "code" : "text");
+    if(type==="text"){ titleIn.value=dup.title||""; input.value=dup.t||""; }
+    else if(type==="code"){ codeTitle.value=dup.title||""; codeInput.value=dup.t||""; langSel.value=dup.lang||"plaintext"; }
+    else if(type==="list"){ listTitle.value=dup.title||""; listInput.value=dup.t||""; }
+    else if(type==="secret"){ secretTitle.value=dup.title||""; secretInput.value=dup.t||""; }
+    editorPanel.classList.remove("hidden"); document.querySelector(".mode-tabs").classList.remove("hidden"); viewer.classList.add("hidden"); history.replaceState(null,"",location.pathname);
+    shared.classList.add("hidden"); updateCounts(); toast("Duplicate — naya link banega");
+  });
+  openBtn.addEventListener("click", ()=>{ if(lastUrl) window.open(lastUrl, "_blank"); });
+  newBtn.addEventListener("click", ()=>{ history.replaceState(null,"",location.pathname); location.reload(); });
+
+  vCopy.addEventListener("click", ()=>{ const txt=vContent.textContent||""; copy(txt.trim().slice(0,10000)); });
+  vCopyLink.addEventListener("click", ()=>copy(location.href));
+  vWa.addEventListener("click", ()=>{ window.open("https://wa.me/?text="+encodeURIComponent("Ye dekho: "+location.href), "_blank"); });
+  vTg.addEventListener("click", ()=>{ window.open("https://t.me/share/url?url="+encodeURIComponent(location.href), "_blank"); });
+  vDl.addEventListener("click", ()=>{
+    if(!lastData) return;
+    if(lastData.type==="file"){ lastData.files.forEach(f=>window.open(f.url, "_blank")); }
+    else{
+      const name=(lastData.title? lastData.title.replace(/[^a-z0-9]/gi,"_") : "parchi")+".txt";
+      const blob=new Blob([vContent.textContent||""], {type:"text/plain"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    }
+  });
+  vImg.addEventListener("click", ()=>{
+    const txt=vContent.textContent||""; const dataUrl=makeImage(txt.slice(0,1000), lastData && lastData.title? lastData.title : "");
+    const a=document.createElement("a"); a.href=dataUrl; a.download="parchi.png"; document.body.appendChild(a); a.click(); setTimeout(()=>a.remove(), 500);
+  });
+  vPrint.addEventListener("click", ()=>window.print());
+  vEdit.addEventListener("click", ()=>{
+    if(!lastId) return;
+    // Made in India edit flow: same link updates via ?edit=
+    location.href=location.pathname+"?edit="+encodeURIComponent(lastId);
+  });
+  vDup.addEventListener("click", ()=>dupBtn.click());
+  vRetry.addEventListener("click", load);
+
+  lockBtn.addEventListener("click", async ()=>{
+    const code=lockIn.value.trim(); if(!pendingData) return;
+    if(code===pendingData.pwd){
+      lockPrompt.classList.add("hidden");
+      await handleView(lastId||getId(), pendingData);
+      if(pendingData.burn){
+        fetch(API+"/"+encodeURIComponent(getId()), {method:"DELETE"}).catch(()=>{});
+        burnNote.classList.remove("hidden");
+      }
+    }else{ toast("Galat code"); lockIn.focus(); }
+  });
+  lockIn.addEventListener("keydown", e=>{ if(e.key==="Enter") lockBtn.click(); });
+
+  document.getElementById("year").textContent=new Date().getFullYear();
+  try{
+    const d=localStorage.getItem(DRAFT);
+    if(d && !getId() && !getEditId()){
+      const obj=JSON.parse(d);
+      if(obj.mode) setMode(obj.mode);
+      if(obj.title) titleIn.value=obj.title;
+      if(obj.text) input.value=obj.text;
+      if(obj.codeTitle) codeTitle.value=obj.codeTitle;
+      if(obj.code) codeInput.value=obj.code;
+      if(obj.lang) langSel.value=obj.lang;
+      if(obj.listTitle) listTitle.value=obj.listTitle;
+      if(obj.list) listInput.value=obj.list;
+      if(obj.secretTitle) secretTitle.value=obj.secretTitle;
+      if(obj.secret) secretInput.value=obj.secret;
+      if(obj.customId) customIdIn.value=obj.customId;
+      if(obj.expiry) expirySel.value=obj.expiry;
+      if(obj.pwd) pwdIn.value=obj.pwd;
+      if(obj.burn) burnChk.checked=obj.burn;
+    }
+  }catch{}
+  updateCounts(); renderHist();
+  // Made in India: edit after sharing via ?edit=ID or #ID
+  (async ()=>{
+    const didEdit=await loadEdit();
+    if(!didEdit){
+      const isV=await load();
+      if(!isV) input.focus();
+    }
+  })();
+
+  input.addEventListener("keydown", e=>{ if((e.metaKey||e.ctrlKey) && e.key==="Enter"){ e.preventDefault(); make(); } });
+  codeInput.addEventListener("keydown", e=>{ if((e.metaKey||e.ctrlKey) && e.key==="Enter"){ e.preventDefault(); make(); } });
+})();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a307e4de8d3071b0',t:'MTc4NzYzMjU2OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
