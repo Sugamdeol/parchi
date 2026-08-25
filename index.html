@@ -296,11 +296,14 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
     <!-- FILE -->
     <section id="mode-file" class="mode-section hidden">
       <h2 class="title">File bhejo</h2>
-      <p class="subtitle">Photo, PDF, zip — 1GB tak, chhota link.</p>
-      <div id="drop-zone" class="drop-zone" tabindex="0" role="button"><input id="file-input" type="file" multiple><div class="drop-icon">📎</div><p><b>Kheecho ya click karo</b></p><small>Max 1GB • auto delete 1h-72h • 🇮🇳</small></div>
+      <p class="subtitle">Photo, PDF, zip — 1GB tak, chhota link. Unlimited views default 🇮🇳</p>
+      <input id="file-title" class="title-input" type="text" placeholder="File title (optional)" maxlength="80">
+      <div id="drop-zone" class="drop-zone" tabindex="0" role="button"><input id="file-input" type="file" multiple><div class="drop-icon">📎</div><p><b>Kheecho ya click karo</b></p><small>Max 1GB • auto delete 1h-72h • 🇮🇳 • 2 servers fallback</small></div>
       <div id="file-list" class="file-list"></div>
+      <div id="file-upload-status" class="hint" style="margin-top:6px;"></div>
       <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
         <label style="font-size:11px;">File expiry:</label><select id="file-expiry" style="border:1px solid var(--rule); border-radius:2px; padding:5px 7px; font-size:11px;"><option value="1h">1h</option><option value="12h">12h</option><option value="24h" selected>24h</option><option value="72h">72h</option></select>
+        <span style="font-size:10px; color:var(--ink-2);">Litterbox + tmpfiles.org fallback</span>
       </div>
     </section>
 
@@ -458,10 +461,12 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
   const listInput=$("#list-input");
   const secretTitle=$("#secret-title");
   const secretInput=$("#secret-input");
+  const fileTitleIn=$("#file-title");
   const dropZone=$("#drop-zone");
   const fileIn=$("#file-input");
   const fileList=$("#file-list");
   const fileExpiry=$("#file-expiry");
+  const fileStatus=$("#file-upload-status");
   const customIdIn=$("#custom-id");
   const checkIdBtn=$("#check-id-btn");
   const customIdStatus=$("#custom-id-status");
@@ -569,6 +574,8 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
     // default unlimited views for all simple modes — fix bug where simple parchi burned after 1 view
     if(m==="secret"){ burnChk.checked=true; viewsLimitSel.value="1"; }
     else { burnChk.checked=false; viewsLimitSel.value="0"; }
+    // file mode hint
+    if(m==="file" && fileStatus) fileStatus.textContent = selectedFiles.length? selectedFiles.length+" file(s) ready" : "";
     updateCounts();
   }
   modeTabs.forEach(t=>t.addEventListener("click", ()=>setMode(t.dataset.mode)));
@@ -587,8 +594,10 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
       emptySt.classList.toggle("hidden", ch!==0 || codeTitle.value.trim()!=="");
       createBtn.disabled=!(ch>0);
     }else if(curMode==="file"){
-      emptySt.classList.toggle("hidden", selectedFiles.length>0);
-      createBtn.disabled=selectedFiles.length===0;
+      const hasFiles = selectedFiles.length>0 || (editingId && lastData && lastData.files && lastData.files.length>0);
+      emptySt.classList.toggle("hidden", hasFiles || (fileTitleIn && fileTitleIn.value.trim()!==""));
+      createBtn.disabled=!hasFiles;
+      if(fileStatus) fileStatus.textContent = hasFiles ? (selectedFiles.length? selectedFiles.length+" new file(s) + " : "") + (editingId && lastData && lastData.files ? lastData.files.length+" old file(s)" : "") + " ready" : "No file — kheecho ya click karo";
     }else if(curMode==="list"){
       const ch=listInput.value.trim().length;
       emptySt.classList.toggle("hidden", ch!==0 || listTitle.value.trim()!=="");
@@ -657,7 +666,7 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
     u.lang="en-IN"; speechSynthesis.speak(u);
   });
 
-  // file handling
+  // file handling — fixed with dual upload fallback + edit preserve
   function renderFiles(){
     fileList.innerHTML="";
     selectedFiles.forEach((f,i)=>{
@@ -665,6 +674,14 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
       div.innerHTML="<div><b>"+f.name+"</b><br><small>"+(f.size/1024/1024).toFixed(2)+" MB • "+f.type+"</small></div><button class='btn btn-small' data-i='"+i+"'>Hatao</button>";
       fileList.appendChild(div);
     });
+    // show existing files when editing
+    if(editingId && lastData && lastData.files && lastData.files.length){
+      lastData.files.forEach((f,i)=>{
+        const div=document.createElement("div"); div.className="file-item"; div.style.opacity="0.8";
+        div.innerHTML="<div><b>"+f.name+" (purana)</b><br><small>"+(f.size? (f.size/1024/1024).toFixed(2)+" MB • " : "")+f.type+" • <a href='"+f.url+"' target='_blank'>open</a></small></div><span style='font-size:10px; color:var(--ink-2);'>keep</span>";
+        fileList.appendChild(div);
+      });
+    }
     fileList.querySelectorAll("button").forEach(b=>{
       b.addEventListener("click", ()=>{ selectedFiles.splice(parseInt(b.dataset.i),1); renderFiles(); updateCounts(); });
     });
@@ -676,6 +693,7 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
     }
     if(selectedFiles.length>5){ selectedFiles=selectedFiles.slice(0,5); toast("Max 5 files"); }
     renderFiles(); updateCounts();
+    if(fileStatus) fileStatus.textContent = selectedFiles.length+" file(s) ready — upload hoga jab link banao";
   }
   dropZone.addEventListener("click", ()=>fileIn.click());
   dropZone.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); fileIn.click(); } });
@@ -683,6 +701,44 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
   dropZone.addEventListener("dragover", e=>{ e.preventDefault(); dropZone.classList.add("dragover"); });
   dropZone.addEventListener("dragleave", ()=>dropZone.classList.remove("dragover"));
   dropZone.addEventListener("drop", e=>{ e.preventDefault(); dropZone.classList.remove("dragover"); handleFiles(e.dataTransfer.files); });
+
+  // robust upload with fallback: litterbox first, then tmpfiles.org
+  async function uploadToLitterbox(file, expiry){
+    const fd=new FormData(); fd.append("reqtype","fileupload"); fd.append("time", expiry); fd.append("fileToUpload", file);
+    const r=await fetch(LITTER, {method:"POST", body:fd});
+    if(!r.ok) throw new Error("litterbox "+r.status);
+    const txt=(await r.text()).trim();
+    if(!txt.startsWith("http")) throw new Error(txt.slice(0,120));
+    return txt;
+  }
+  async function uploadToTmpfiles(file){
+    const fd=new FormData(); fd.append("file", file);
+    const r=await fetch("https://tmpfiles.org/api/v1/upload", {method:"POST", body:fd});
+    if(!r.ok) throw new Error("tmpfiles "+r.status);
+    const j=await r.json();
+    if(j.status!=="success" || !j.data?.url) throw new Error("tmpfiles bad response");
+    let url=j.data.url;
+    if(url.includes("tmpfiles.org/") && !url.includes("/dl/")) url=url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
+    return url;
+  }
+  async function uploadFileWithFallback(file, expiry, idx, total){
+    if(fileStatus) fileStatus.textContent = "Uploading "+(idx+1)+"/"+total+": "+file.name+"...";
+    try{
+      const url=await uploadToLitterbox(file, expiry);
+      toast("✅ "+file.name+" → litterbox");
+      return url;
+    }catch(e1){
+      console.warn("litterbox fail", e1);
+      if(fileStatus) fileStatus.textContent = "Litterbox fail, trying tmpfiles.org for "+file.name+"...";
+      try{
+        const url=await uploadToTmpfiles(file);
+        toast("✅ "+file.name+" → tmpfiles.org");
+        return url;
+      }catch(e2){
+        throw new Error(file.name+": "+e1.message+" | "+e2.message);
+      }
+    }
+  }
 
   // custom ID check
   checkIdBtn.addEventListener("click", async ()=>{
@@ -799,21 +855,30 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
 
     try{
       if(curMode==="file"){
-        if(!editingId && selectedFiles.length===0){ showErr("File chuno"); return; }
+        const hasOld = editingId && lastData && lastData.files && lastData.files.length>0;
+        if(!hasOld && selectedFiles.length===0){ showErr("File chuno — kheecho ya click karo"); return; }
         createBtn.disabled=true; createBtn.textContent="Uploading files...";
         const filesData=[];
-        for(const f of selectedFiles){
-          const fd=new FormData(); fd.append("reqtype","fileupload"); fd.append("time", fileExpiry.value); fd.append("fileToUpload", f);
-          const upRes=await fetch(LITTER, {method:"POST", body:fd});
-          if(!upRes.ok) throw new Error("upload fail");
-          const fileUrl=(await upRes.text()).trim();
-          if(!fileUrl.startsWith("http")) throw new Error(fileUrl);
-          filesData.push({url:fileUrl, name:f.name, size:f.size, type:f.type});
+        // keep old files if editing and no new files replace? we append new to old, or replace if new selected
+        if(hasOld && selectedFiles.length===0){
+          // preserve old files on edit when no new file chosen
+          filesData.push(...lastData.files);
+        }else{
+          // upload new files
+          let idx=0;
+          for(const f of selectedFiles){
+            const fileUrl=await uploadFileWithFallback(f, fileExpiry.value, idx, selectedFiles.length);
+            filesData.push({url:fileUrl, name:f.name, size:f.size, type:f.type});
+            idx++;
+          }
+          // if editing and we uploaded new, optionally keep old? user asked edit after sharing — for file mode, we replace with new, but keep old if they want? Here we replace; if you want merge, uncomment next line:
+          // if(hasOld) filesData.unshift(...lastData.files);
         }
+        if(filesData.length===0){ showErr("File upload fail — dobara try karo"); return; }
         payload={
           type:"file", files:filesData,
-          title: titleIn.value.trim().slice(0,80) || (filesData[0]? filesData[0].name : "File"),
-          c:new Date().toISOString(), exp:expAt, burn:burnChk.checked, pwd:pwd||"", views:0, viewsLimit, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:6
+          title: (fileTitleIn && fileTitleIn.value.trim().slice(0,80)) || titleIn.value.trim().slice(0,80) || (filesData[0]? filesData[0].name : "File"),
+          c:new Date().toISOString(), exp:expAt, burn:burnChk.checked, pwd:pwd||"", views:0, viewsLimit, reactions:{heart:0, laugh:0, pray:0, fire:0}, comments:[], paper:document.documentElement.style.getPropertyValue("--paper-bg")||"#FFFFFF", v:7
         };
       }else if(curMode==="code"){
         const t=codeInput.value.trim(); if(!t && !editingId){ showErr("Code likho"); return; }
@@ -922,6 +987,7 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
       else if(type==="code"){ codeTitle.value=d.title||""; codeInput.value=d.t||""; langSel.value=d.lang||"plaintext"; }
       else if(type==="list"){ listTitle.value=d.title||""; listInput.value=d.t||""; }
       else if(type==="secret"){ secretTitle.value=d.title||""; secretInput.value=d.t||""; }
+      else if(type==="file"){ if(fileTitleIn) fileTitleIn.value=d.title||""; renderFiles(); }
       customIdIn.value=eid;
       if(d.pwd) pwdIn.value=d.pwd;
       if(d.burn) burnChk.checked=true;
@@ -1150,12 +1216,13 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
   listInput.addEventListener("input", updateCounts);
   secretTitle.addEventListener("input", updateCounts);
   secretInput.addEventListener("input", updateCounts);
+  if(fileTitleIn) fileTitleIn.addEventListener("input", updateCounts);
   customIdIn.addEventListener("input", ()=>{ customIdStatus.textContent=""; });
 
   clearBtn.addEventListener("click", ()=>{
     if(curMode==="text"){ input.value=""; titleIn.value=""; }
     else if(curMode==="code"){ codeInput.value=""; codeTitle.value=""; }
-    else if(curMode==="file"){ selectedFiles=[]; fileList.innerHTML=""; fileIn.value=""; }
+    else if(curMode==="file"){ selectedFiles=[]; fileList.innerHTML=""; fileIn.value=""; if(fileTitleIn) fileTitleIn.value=""; if(fileStatus) fileStatus.textContent=""; }
     else if(curMode==="list"){ listInput.value=""; listTitle.value=""; }
     else if(curMode==="secret"){ secretInput.value=""; secretTitle.value=""; }
     customIdIn.value=""; updateCounts(); shared.classList.add("hidden"); hideErr(); toast("Saaf"); editingId=null; hideEditBanner();
@@ -1193,7 +1260,7 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
     else if(type==="code"){ codeTitle.value=lastData.title||""; codeInput.value=lastData.t||""; langSel.value=lastData.lang||"plaintext"; }
     else if(type==="list"){ listTitle.value=lastData.title||""; listInput.value=lastData.t||""; }
     else if(type==="secret"){ secretTitle.value=lastData.title||""; secretInput.value=lastData.t||""; }
-    else if(type==="file"){ titleIn.value=lastData.title||""; }
+    else if(type==="file"){ if(fileTitleIn) fileTitleIn.value=lastData.title||""; renderFiles(); }
     customIdIn.value=lastId;
     editorPanel.classList.remove("hidden"); document.querySelector(".mode-tabs").classList.remove("hidden"); viewer.classList.add("hidden"); history.replaceState(null,"",location.pathname);
     shared.classList.add("hidden"); showEditBanner(lastId); updateCounts(); toast("Edit mode — save karke update hoga 🇮🇳");
@@ -1288,5 +1355,5 @@ footer{ margin-top:auto; padding:16px 0 22px; border-top:1px dashed #D4C07A; fon
   codeInput.addEventListener("keydown", e=>{ if((e.metaKey||e.ctrlKey) && e.key==="Enter"){ e.preventDefault(); make(); } });
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a307f2774cf3abaa',t:'MTc4NzYzMzEyNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a30abde8fda88a7c',t:'MTc4NzY2MjQyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
