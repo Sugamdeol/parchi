@@ -2,6 +2,8 @@
 
 **Made in India • Made in Ghaziabad with chai • Atmanirbhar Bharat**
 
+**Live demo:** https://parchibysd.vercel.app
+
 Parchi is a single-file, no-login, deliberate text sharing tool for normal users. Kirana list, address, shayari, code, file, checklist, secret — likho, chhota link banao, WhatsApp pe bhejo. 7 akshar ka link. No jargon. No signup. No foreign tracking.
 
 > Design philosophy: hand-built, paper-like, Kalam handwriting font, taped chit, ruled paper. Feels like a real parchi, not AI.
@@ -18,7 +20,7 @@ Parchi is a single-file, no-login, deliberate text sharing tool for normal users
 | **List** | ✅ | Har line ek item — viewer me tick kar sakte ho, local save |
 | **Secret** | 🔒 | Burn after reading, password lock, views limit — ek baar padhne ke baad gayab |
 
-All modes → same short link `yourdomain/#AbC123x` (7 chars, base62). Custom vanity ID bhi: `mummy-dawai`, `api-fix`.
+All modes → same short link `parchibysd.vercel.app/#AbC123x` (7 chars, base62). Custom vanity ID bhi: `mummy-dawai`, `api-fix`.
 
 ## 🚀 Features — More than just text
 
